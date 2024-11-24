@@ -2,7 +2,7 @@
 -- ExtendedGameInfoDisplay
 --
 -- Main class to extend the default gameInfoDisplay with year info
--- and temperatur + trend and current/min/max temperatur.
+-- and temperature + trend and current/min/max temperatur.
 --
 -- Copyright (c) Peppie84, 2024
 -- https://github.com/Peppie84/FS25_ExtendedGameInfoDisplay
@@ -10,7 +10,7 @@
 
 ExtendedGameInfoDisplay = {
     STRECH_GAME_INFO_DISPLAY = 95,
-    TEMPERATUR_ICON_SIZE = 40,
+    TEMPERATURE_ICON_SIZE = 40,
     L10N_SYMBOLS = {
         YEAR_TEXT = "yearinfo_current_year"
     },
@@ -32,16 +32,16 @@ function ExtendedGameInfoDisplay:hud__createDisplayComponents(overwrittenFunc, u
     self.gameInfoDisplay.weatherNextIcon.offsetX = -self.gameInfoDisplay:scalePixelToScreenWidth(ExtendedGameInfoDisplay.STRECH_GAME_INFO_DISPLAY)
 
     local posX, posY = self.gameInfoDisplay:getPosition()
-    local temperaturPositionY = posY - self.gameInfoDisplay:scalePixelToScreenHeight(ExtendedGameInfoDisplay.TEMPERATUR_ICON_SIZE + 12)
-    local temperaturIconWidth = self.gameInfoDisplay:scalePixelToScreenWidth(ExtendedGameInfoDisplay.TEMPERATUR_ICON_SIZE)
-    local temperaturIconHeight = self.gameInfoDisplay:scalePixelToScreenHeight(ExtendedGameInfoDisplay.TEMPERATUR_ICON_SIZE)
+    local temperaturePositionY = posY - self.gameInfoDisplay:scalePixelToScreenHeight(ExtendedGameInfoDisplay.TEMPERATURE_ICON_SIZE + 12)
+    local temperatureIconWidth = self.gameInfoDisplay:scalePixelToScreenWidth(ExtendedGameInfoDisplay.TEMPERATURE_ICON_SIZE)
+    local temperatureIconHeight = self.gameInfoDisplay:scalePixelToScreenHeight(ExtendedGameInfoDisplay.TEMPERATURE_ICON_SIZE)
 
-    self.gameInfoDisplay.temperatur = g_overlayManager:createOverlay("ui_elements.thermometer", 0, temperaturPositionY, temperaturIconWidth, temperaturIconHeight)
-    self.gameInfoDisplay.temperatur:setColor(unpack(HUD.COLOR.ACTIVE))
-    self.gameInfoDisplay.temperaturUp = g_overlayManager:createOverlay("ui_elements.thermometerUp", 0, temperaturPositionY, temperaturIconWidth, temperaturIconHeight)
-    self.gameInfoDisplay.temperaturUp:setColor(unpack(HUD.COLOR.ACTIVE))
-    self.gameInfoDisplay.temperaturDown = g_overlayManager:createOverlay("ui_elements.thermometerDown", 0, temperaturPositionY, temperaturIconWidth, temperaturIconHeight)
-    self.gameInfoDisplay.temperaturDown:setColor(unpack(HUD.COLOR.ACTIVE))
+    self.gameInfoDisplay.temperature = g_overlayManager:createOverlay("ui_elements.thermometer", 0, temperaturePositionY, temperatureIconWidth, temperatureIconHeight)
+    self.gameInfoDisplay.temperature:setColor(unpack(HUD.COLOR.ACTIVE))
+    self.gameInfoDisplay.temperatureUp = g_overlayManager:createOverlay("ui_elements.thermometerUp", 0, temperaturePositionY, temperatureIconWidth, temperatureIconHeight)
+    self.gameInfoDisplay.temperatureUp:setColor(unpack(HUD.COLOR.ACTIVE))
+    self.gameInfoDisplay.temperatureDown = g_overlayManager:createOverlay("ui_elements.thermometerDown", 0, temperaturePositionY, temperatureIconWidth, temperatureIconHeight)
+    self.gameInfoDisplay.temperatureDown:setColor(unpack(HUD.COLOR.ACTIVE))
 end
 
 ---Overwrite GameInfoDisplay.draw()
@@ -69,56 +69,56 @@ function ExtendedGameInfoDisplay:gameinfodisplay__draw(overwrittenFunc)
     self.weatherNextIcon:render()
     self.weatherNextIcon:setVisible(weatherType ~= nextWeatherType)
 
-    ExtendedGameInfoDisplay:setTemperaturPosition(self)
-    ExtendedGameInfoDisplay:setTemperaturTrendAndDraw(self)
+    ExtendedGameInfoDisplay:setTemperaturePosition(self)
+    ExtendedGameInfoDisplay:setTemperatureTrendAndDraw(self)
     ExtendedGameInfoDisplay:drawYearText(self)
-    ExtendedGameInfoDisplay:drawTemperaturText(self)
+    ExtendedGameInfoDisplay:drawTemperatureText(self)
 end
 
-function ExtendedGameInfoDisplay:setTemperaturPosition(gameInfoDisplay)
+function ExtendedGameInfoDisplay:setTemperaturePosition(gameInfoDisplay)
     local referencePositionX =  gameInfoDisplay.calendarIcon.x - gameInfoDisplay:scalePixelToScreenHeight(65)
-    gameInfoDisplay.temperatur.x = referencePositionX
-    gameInfoDisplay.temperaturUp.x = referencePositionX
-    gameInfoDisplay.temperaturDown.x = referencePositionX
+    gameInfoDisplay.temperature.x = referencePositionX
+    gameInfoDisplay.temperatureUp.x = referencePositionX
+    gameInfoDisplay.temperatureDown.x = referencePositionX
 end
 
-function ExtendedGameInfoDisplay:setTemperaturTrendAndDraw(gameInfoDisplay)
+function ExtendedGameInfoDisplay:setTemperatureTrendAndDraw(gameInfoDisplay)
     local temperaturTrend = g_currentMission.environment.weather:getCurrentTemperatureTrend()
 
-    gameInfoDisplay.temperatur:setVisible(temperaturTrend == 0)
-    gameInfoDisplay.temperaturUp:setVisible(temperaturTrend > 0)
-    gameInfoDisplay.temperaturDown:setVisible(temperaturTrend < 0)
+    gameInfoDisplay.temperature:setVisible(temperaturTrend == 0)
+    gameInfoDisplay.temperatureUp:setVisible(temperaturTrend > 0)
+    gameInfoDisplay.temperatureDown:setVisible(temperaturTrend < 0)
 
-    gameInfoDisplay.temperatur:draw()
-    gameInfoDisplay.temperaturUp:draw()
-    gameInfoDisplay.temperaturDown:draw()
+    gameInfoDisplay.temperature:draw()
+    gameInfoDisplay.temperatureUp:draw()
+    gameInfoDisplay.temperatureDown:draw()
 
-    local seperatorPosX = gameInfoDisplay.temperatur.x - gameInfoDisplay:scalePixelToScreenWidth(5)
-    local seperatorPosYStart = gameInfoDisplay.temperatur.y + gameInfoDisplay:scalePixelToScreenHeight(ExtendedGameInfoDisplay.TEMPERATUR_ICON_SIZE-1)
-    local seperatorPosYEnd = gameInfoDisplay.temperatur.y + gameInfoDisplay:scalePixelToScreenHeight(4)
+    local seperatorPosX = gameInfoDisplay.temperature.x - gameInfoDisplay:scalePixelToScreenWidth(5)
+    local seperatorPosYStart = gameInfoDisplay.temperature.y + gameInfoDisplay:scalePixelToScreenHeight(ExtendedGameInfoDisplay.TEMPERATURE_ICON_SIZE-1)
+    local seperatorPosYEnd = gameInfoDisplay.temperature.y + gameInfoDisplay:scalePixelToScreenHeight(4)
 
     drawLine2D(seperatorPosX, seperatorPosYStart, seperatorPosX, seperatorPosYEnd, gameInfoDisplay.separatorWidth, 1,1,1,0.2)
 end
 
-function ExtendedGameInfoDisplay:drawTemperaturText(gameInfoDisplay)
-    local minTemperaturInC, maxTemperaturInC = g_currentMission.environment.weather:getCurrentMinMaxTemperatures()
-    local currentTemperaturInC = g_currentMission.environment.weather:getCurrentTemperature()
+function ExtendedGameInfoDisplay:drawTemperatureText(gameInfoDisplay)
+    local minTemperatureInC, maxTemperatureInC = g_currentMission.environment.weather:getCurrentMinMaxTemperatures()
+    local currentTemperatureInC = g_currentMission.environment.weather:getCurrentTemperature()
 
-    local minTemperaturExpanded =  g_i18n:getTemperature(minTemperaturInC)
-    local maxTemperaturExpanded = g_i18n:getTemperature(maxTemperaturInC)
-    local currentTemperaturExpanded = g_i18n:getTemperature(currentTemperaturInC)
+    local minTemperatureExpanded =  g_i18n:getTemperature(minTemperatureInC)
+    local maxTemperatureExpanded = g_i18n:getTemperature(maxTemperatureInC)
+    local currentTemperatureExpanded = g_i18n:getTemperature(currentTemperatureInC)
 
-    local scaledTextSizeForCurrentTemperatur = gameInfoDisplay:scalePixelToScreenHeight(19)
-    local scaledTextSizeForTemperatur = gameInfoDisplay:scalePixelToScreenHeight(14)
+    local scaledTextSizeForCurrentTemperature = gameInfoDisplay:scalePixelToScreenHeight(19)
+    local scaledTextSizeForTemperature = gameInfoDisplay:scalePixelToScreenHeight(14)
 
-    local temperaturTextX = gameInfoDisplay.temperatur.x + gameInfoDisplay.temperatur.width + gameInfoDisplay:scalePixelToScreenWidth(40)
-    local temperaturTextY = gameInfoDisplay.temperatur.y + gameInfoDisplay.temperatur.height + gameInfoDisplay:scalePixelToScreenHeight(2)
+    local temperatureTextX = gameInfoDisplay.temperature.x + gameInfoDisplay.temperature.width + gameInfoDisplay:scalePixelToScreenWidth(40)
+    local temperatureTextY = gameInfoDisplay.temperature.y + gameInfoDisplay.temperature.height + gameInfoDisplay:scalePixelToScreenHeight(2)
 
     setTextBold(false)
     setTextAlignment(RenderText.ALIGN_RIGHT)
 
-    renderText(temperaturTextX, temperaturTextY - gameInfoDisplay:scalePixelToScreenHeight(22), scaledTextSizeForCurrentTemperatur, string.format('%d°', currentTemperaturExpanded))
-    renderText(temperaturTextX, temperaturTextY - gameInfoDisplay:scalePixelToScreenHeight(38), scaledTextSizeForTemperatur, string.format('%d°/%d°', maxTemperaturExpanded, minTemperaturExpanded))
+    renderText(temperatureTextX, temperatureTextY - gameInfoDisplay:scalePixelToScreenHeight(22), scaledTextSizeForCurrentTemperature, string.format('%d°', currentTemperatureExpanded))
+    renderText(temperatureTextX, temperatureTextY - gameInfoDisplay:scalePixelToScreenHeight(38), scaledTextSizeForTemperature, string.format('%d°/%d°', maxTemperatureExpanded, minTemperatureExpanded))
 end
 
 function ExtendedGameInfoDisplay:drawYearText(gameInfoDisplay)
