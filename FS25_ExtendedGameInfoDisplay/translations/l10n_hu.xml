@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+  <translationContributors>Petrovics Zsombor</translationContributors>
+  <elements>
+    <e k="mod_title" v="Kibővített Információs Sáv"/>
+    <e k="yearinfo_current_year" v="Év"/>
+  </elements>
+</l10n>

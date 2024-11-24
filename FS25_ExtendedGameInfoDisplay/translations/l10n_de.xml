@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+  <translationContributors>Peppie84</translationContributors>
+  <elements>
+    <e k="mod_title" v="Erweiterte Spiel-Infodarstellung"/>
+    <e k="yearinfo_current_year" v="Jahr"/>
+  </elements>
+</l10n>
