@@ -19,7 +19,7 @@
 <h3 align="center"><u>FS25_ExtendedGameInfoDisplay</u></h3>
 
 <p align="center">
-    Expands the current GameInfoDisplay in the upper right corner by displaying the current year under the date and activates a hidden temperature feature with an indicator of whether the temperature is falling, staying constant or rising, the display of the current temperature. I also added the min/max temperature of the day.
+    Expands the current GameInfoDisplay in the upper right corner by displaying the current year under the date and activates a temperature feature with an indicator of whether the temperature is falling, staying constant or rising, the display of the current temperature. I also added the min/max temperature of the day.
 </p>
 
 </div>
