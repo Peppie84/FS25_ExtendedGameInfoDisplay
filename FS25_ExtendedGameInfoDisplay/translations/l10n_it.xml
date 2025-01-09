@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+  <translationContributors>Rudolfet</translationContributors>
+  <elements>
+    <e k="mod_title" v="Visualizzazione estesa delle informazioni sul gioco"/>
+    <e k="yearinfo_current_year" v="Anno"/>
+  </elements>
+</l10n>
