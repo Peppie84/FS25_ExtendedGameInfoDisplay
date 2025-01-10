@@ -76,7 +76,7 @@ function ExtendedGameInfoDisplay:gameinfodisplay__draw(overwrittenFunc)
 end
 
 function ExtendedGameInfoDisplay:setTemperaturePosition(gameInfoDisplay)
-    local referencePositionX =  gameInfoDisplay.calendarIcon.x - gameInfoDisplay:scalePixelToScreenHeight(65)
+    local referencePositionX =  gameInfoDisplay.calendarIcon.x - gameInfoDisplay:scalePixelToScreenWidth(120)
     gameInfoDisplay.temperature.x = referencePositionX
     gameInfoDisplay.temperatureUp.x = referencePositionX
     gameInfoDisplay.temperatureDown.x = referencePositionX
