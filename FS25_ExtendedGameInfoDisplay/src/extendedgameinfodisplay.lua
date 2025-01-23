@@ -50,14 +50,11 @@ function ExtendedGameInfoDisplay:gameinfodisplay__draw(overwrittenFunc)
     overwrittenFunc(self)
 
     local weatherType = g_currentMission.environment.weather:getCurrentWeatherType()
-    local forcastDayTime = math.floor(g_currentMission.environment.dayTime + ExtendedGameInfoDisplay.WEATHER_HOURS_FORECAST )
-    local forcastDay = g_currentMission.environment.currentDay
-    if forcastDayTime > ExtendedGameInfoDisplay.HOURS_A_DAY then
-        forcastDayTime = forcastDayTime - ExtendedGameInfoDisplay.HOURS_A_DAY
-        forcastDay = forcastDay + 1
-    end
+    local forcastDayTime = g_currentMission.environment.dayTime + ExtendedGameInfoDisplay.WEATHER_HOURS_FORECAST
+    local forcastDay = g_currentMission.environment.currentMonotonicDay
+    forcastDayTime, forcastDay = g_currentMission.environment:getDayAndDayTime(forcastDayTime, forcastDay)
+    local nextWeatherType = g_currentMission.environment.weather:getNextWeatherType(forcastDay, forcastDayTime)
 
-    local nextWeatherType = g_currentMission.environment.weather:getNextWeatherType(forcastDay, forcastDayTime )
 
     -- Strech the background and render new!
     self.infoBgScale.width = self:scalePixelToScreenWidth(ExtendedGameInfoDisplay.STRECH_GAME_INFO_DISPLAY)
@@ -65,9 +62,10 @@ function ExtendedGameInfoDisplay:gameinfodisplay__draw(overwrittenFunc)
     self.infoBgScale:render()
 
     -- ReRender to bring it back to top
+    if weatherType ~= nextWeatherType then
+        self.weatherNextIcon:render()
+    end
     self.weatherIcon:render()
-    self.weatherNextIcon:render()
-    self.weatherNextIcon:setVisible(weatherType ~= nextWeatherType)
 
     ExtendedGameInfoDisplay:setTemperaturePosition(self)
     ExtendedGameInfoDisplay:setTemperatureTrendAndDraw(self)
@@ -139,7 +137,6 @@ end
 
 --- Initialize the mod
 local function init()
-    --HUD.new = Utils.prependedFunction(HUD.new, newHud)
     HUD.createDisplayComponents = Utils.overwrittenFunction(HUD.createDisplayComponents, ExtendedGameInfoDisplay.hud__createDisplayComponents)
     GameInfoDisplay.draw = Utils.overwrittenFunction(GameInfoDisplay.draw, ExtendedGameInfoDisplay.gameinfodisplay__draw)
 end
