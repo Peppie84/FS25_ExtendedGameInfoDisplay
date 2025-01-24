@@ -47,14 +47,14 @@ end
 ---Overwrite GameInfoDisplay.draw()
 ---@param overwrittenFunc function
 function ExtendedGameInfoDisplay:gameinfodisplay__draw(overwrittenFunc)
+    local environment = g_currentMission.environment
+    local weatherType = environment.weather:getCurrentWeatherType()
+    local forcastDayTime = environment.dayTime + ExtendedGameInfoDisplay.WEATHER_HOURS_FORECAST
+    local forcastDay = environment.currentMonotonicDay
+    forcastDayTime, forcastDay = environment:getDayAndDayTime(forcastDayTime, forcastDay)
+    local nextWeatherType = environment.weather:getNextWeatherType(forcastDayTime, forcastDay)
+
     overwrittenFunc(self)
-
-    local weatherType = g_currentMission.environment.weather:getCurrentWeatherType()
-    local forcastDayTime = g_currentMission.environment.dayTime + ExtendedGameInfoDisplay.WEATHER_HOURS_FORECAST
-    local forcastDay = g_currentMission.environment.currentMonotonicDay
-    forcastDayTime, forcastDay = g_currentMission.environment:getDayAndDayTime(forcastDayTime, forcastDay)
-    local nextWeatherType = g_currentMission.environment.weather:getNextWeatherType(forcastDay, forcastDayTime)
-
 
     -- Strech the background and render new!
     self.infoBgScale.width = self:scalePixelToScreenWidth(ExtendedGameInfoDisplay.STRECH_GAME_INFO_DISPLAY)
