@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
-  <translationContributors>Gonimy_Vetrom</translationContributors>
+  <translationContributors>Gonimy_Vetrom, garik-59</translationContributors>
   <elements>
-    <e k="mod_title" v="Extended Game Infodisplay"/>
+    <e k="mod_title" v="Розширений інформаційний дисплей гри"/>
     <e k="yearinfo_current_year" v="Рік"/>
   </elements>
 </l10n>
