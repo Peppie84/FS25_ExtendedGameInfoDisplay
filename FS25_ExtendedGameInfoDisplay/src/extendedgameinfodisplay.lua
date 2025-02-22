@@ -47,17 +47,14 @@ end
 ---Overwrite GameInfoDisplay.draw()
 ---@param overwrittenFunc function
 function ExtendedGameInfoDisplay:gameinfodisplay__draw(overwrittenFunc)
+    local environment = g_currentMission.environment
+    local weatherType = environment.weather:getCurrentWeatherType()
+    local forcastDayTime = environment.dayTime + ExtendedGameInfoDisplay.WEATHER_HOURS_FORECAST
+    local forcastDay = environment.currentMonotonicDay
+    forcastDayTime, forcastDay = environment:getDayAndDayTime(forcastDayTime, forcastDay)
+    local nextWeatherType = environment.weather:getNextWeatherType(forcastDayTime, forcastDay)
+
     overwrittenFunc(self)
-
-    local weatherType = g_currentMission.environment.weather:getCurrentWeatherType()
-    local forcastDayTime = math.floor(g_currentMission.environment.dayTime + ExtendedGameInfoDisplay.WEATHER_HOURS_FORECAST )
-    local forcastDay = g_currentMission.environment.currentDay
-    if forcastDayTime > ExtendedGameInfoDisplay.HOURS_A_DAY then
-        forcastDayTime = forcastDayTime - ExtendedGameInfoDisplay.HOURS_A_DAY
-        forcastDay = forcastDay + 1
-    end
-
-    local nextWeatherType = g_currentMission.environment.weather:getNextWeatherType(forcastDay, forcastDayTime )
 
     -- Strech the background and render new!
     self.infoBgScale.width = self:scalePixelToScreenWidth(ExtendedGameInfoDisplay.STRECH_GAME_INFO_DISPLAY)
@@ -65,9 +62,10 @@ function ExtendedGameInfoDisplay:gameinfodisplay__draw(overwrittenFunc)
     self.infoBgScale:render()
 
     -- ReRender to bring it back to top
+    if weatherType ~= nextWeatherType then
+        self.weatherNextIcon:render()
+    end
     self.weatherIcon:render()
-    self.weatherNextIcon:render()
-    self.weatherNextIcon:setVisible(weatherType ~= nextWeatherType)
 
     ExtendedGameInfoDisplay:setTemperaturePosition(self)
     ExtendedGameInfoDisplay:setTemperatureTrendAndDraw(self)
@@ -76,7 +74,7 @@ function ExtendedGameInfoDisplay:gameinfodisplay__draw(overwrittenFunc)
 end
 
 function ExtendedGameInfoDisplay:setTemperaturePosition(gameInfoDisplay)
-    local referencePositionX =  gameInfoDisplay.calendarIcon.x - gameInfoDisplay:scalePixelToScreenHeight(65)
+    local referencePositionX =  gameInfoDisplay.calendarIcon.x - gameInfoDisplay:scalePixelToScreenWidth(115)
     gameInfoDisplay.temperature.x = referencePositionX
     gameInfoDisplay.temperatureUp.x = referencePositionX
     gameInfoDisplay.temperatureDown.x = referencePositionX
@@ -93,20 +91,20 @@ function ExtendedGameInfoDisplay:setTemperatureTrendAndDraw(gameInfoDisplay)
     gameInfoDisplay.temperatureUp:draw()
     gameInfoDisplay.temperatureDown:draw()
 
-    local seperatorPosX = gameInfoDisplay.temperature.x - gameInfoDisplay:scalePixelToScreenWidth(5)
+    local seperatorPosX = gameInfoDisplay.temperature.x - gameInfoDisplay:scalePixelToScreenWidth(10)
     local seperatorPosYStart = gameInfoDisplay.temperature.y + gameInfoDisplay:scalePixelToScreenHeight(ExtendedGameInfoDisplay.TEMPERATURE_ICON_SIZE-1)
     local seperatorPosYEnd = gameInfoDisplay.temperature.y + gameInfoDisplay:scalePixelToScreenHeight(4)
 
-    drawLine2D(seperatorPosX, seperatorPosYStart, seperatorPosX, seperatorPosYEnd, gameInfoDisplay.separatorWidth, 1,1,1,0.2)
+    drawLine2D(seperatorPosX, seperatorPosYStart, seperatorPosX, seperatorPosYEnd, gameInfoDisplay.separatorWidth, 1,1,1, 0.2)
 end
 
 function ExtendedGameInfoDisplay:drawTemperatureText(gameInfoDisplay)
     local minTemperatureInC, maxTemperatureInC = g_currentMission.environment.weather:getCurrentMinMaxTemperatures()
-    local currentTemperatureInC = g_currentMission.environment.weather:getCurrentTemperature()
+    local currentTemperatureInC = g_currentMission.environment.weather.forecast:getCurrentWeather()
 
-    local minTemperatureExpanded =  g_i18n:getTemperature(minTemperatureInC)
-    local maxTemperatureExpanded = g_i18n:getTemperature(maxTemperatureInC)
-    local currentTemperatureExpanded = g_i18n:getTemperature(currentTemperatureInC)
+    local minTemperatureExpanded =  MathUtil.round(g_i18n:getTemperature(minTemperatureInC), 0)
+    local maxTemperatureExpanded = MathUtil.round(g_i18n:getTemperature(maxTemperatureInC), 0)
+    local currentTemperatureExpanded = MathUtil.round(g_i18n:getTemperature(currentTemperatureInC.temperature), 0)
 
     local scaledTextSizeForCurrentTemperature = gameInfoDisplay:scalePixelToScreenHeight(19)
     local scaledTextSizeForTemperature = gameInfoDisplay:scalePixelToScreenHeight(14)
@@ -125,7 +123,7 @@ function ExtendedGameInfoDisplay:drawYearText(gameInfoDisplay)
     local monthTextSize = gameInfoDisplay:scalePixelToScreenHeight(10)
     local scaledTextSizeForYear = gameInfoDisplay:scalePixelToScreenHeight(12)
 
-    local gameInfoDisplayPosX, gameInfoDisplayPosY = gameInfoDisplay:getPosition()
+    local _, gameInfoDisplayPosY = gameInfoDisplay:getPosition()
     local posX = gameInfoDisplay.calendarIcon.x + gameInfoDisplay.calendarIcon.width + gameInfoDisplay:scalePixelToScreenWidth(2)
     local posY = gameInfoDisplayPosY - gameInfoDisplay.calendarTextOffsetY - monthTextSize
 
@@ -139,7 +137,6 @@ end
 
 --- Initialize the mod
 local function init()
-    --HUD.new = Utils.prependedFunction(HUD.new, newHud)
     HUD.createDisplayComponents = Utils.overwrittenFunction(HUD.createDisplayComponents, ExtendedGameInfoDisplay.hud__createDisplayComponents)
     GameInfoDisplay.draw = Utils.overwrittenFunction(GameInfoDisplay.draw, ExtendedGameInfoDisplay.gameinfodisplay__draw)
 end
